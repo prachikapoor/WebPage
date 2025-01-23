@@ -1,7 +1,7 @@
 # steps to run the file
 
 
-1. clone the project
+1. download the project
 2. save and unzip the file on your local machine
 3. now go to the assignment folder
 4. double click or right click and open with chrome or microsoft edge
