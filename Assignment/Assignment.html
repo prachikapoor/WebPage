@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Travel News</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background-color: #fff;
+      }
+
+      .container {
+        display: flex;
+        width: 96%;
+        margin-top: 4px;
+
+        padding: 0 10px;
+      }
+
+      .article {
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .article img {
+        width: 50%;
+        height: auto;
+      }
+
+      .article h2 {
+        font-size: 18px;
+        margin: 10px 0;
+        color: #202223;
+        font-style: normal;
+      }
+
+      .article p {
+        width: 50%;
+        font-size: 14px;
+        color: #555;
+        left: 3%;
+        position: relative;
+      }
+
+      .article .headline {
+        font-size: 16px;
+      }
+
+      .section-details {
+        display: flex;
+        width: 100%;
+      }
+
+      .section-main-details {
+        margin-top: 5px 5px 0 0;
+      }
+
+      .article-link {
+        text-decoration: none;
+        color: #1691db;
+        font-size: 16px;
+      }
+
+      .main-article {
+        width: 32%;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .image-detail {
+        font-size: 24px;
+      }
+
+      .sub-container {
+        gap: 20px;
+        width: 64%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+
+      .section-main-details img {
+        width: 100%;
+      }
+
+      /* Media Query for Mobile Devices */
+      @media (max-width: 768px) {
+        body {
+          padding: 10px;
+        }
+
+        .container {
+          flex-direction: column;
+          margin: 0;
+        }
+
+        .article img {
+          width: 100%;
+        }
+
+        .article p {
+          display: none;
+        }
+
+        .main-article {
+          width: 100%;
+          margin: 0 0 20px 0;
+        }
+
+        .sub-container {
+          gap: 10px;
+          width: 100%;
+          grid-template-columns: 1fr;
+        }
+
+        .section-details {
+          margin-right: 17px;
+        }
+
+        .headline-container {
+          flex-direction: row-reverse;
+          display: flex;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="newsContainer" class="container"></div>
+
+    <script>
+      async function getJson() {
+        try {
+          const response = await fetch("http://localhost:8000/data.json", {
+            method: "GET",
+            headers: {
+              accept: "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Error! status: ${response.status}`);
+          }
+
+          const jsonData = await response.json();
+
+          const container = document.getElementById("newsContainer"),
+            articleMain = `<div class="main-article">
+                                <a class="article-link" href="">${jsonData.title}</a>
+                                <div class="section-main-details">
+                                    <img src="${jsonData.src}" alt="${jsonData.headline}">
+                                </div>
+                                <h3 class="section-headline">${jsonData.headline}</h3>
+                            </div>
+                            <div class="sub-container" id="newsSubContainer"></div>`;
+          container.insertAdjacentHTML("beforeend", articleMain),
+            (subContainer = document.getElementById("newsSubContainer"));
+
+          jsonData.articles.forEach((article) => {
+            const articleElement = `
+                <div class="article">
+                    <a class="article-link" href="${
+                      article.link
+                    }">${article.primarySectionRouteName.toUpperCase()}</a>
+                    <div class="headline-container">
+                        <h2 class="headline">${article.headline}</h2>
+                        <div class="section-details">
+                            <img src="${article.thumbnail.src}" alt="${
+              article.thumbnail.title
+            }" class="image-detail">
+                            <p>${article.standfirst}</p>
+                        </div>
+                    </div>
+                </div>`;
+            subContainer.insertAdjacentHTML("beforeend", articleElement);
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      getJson();
+    </script>
+  </body>
+</html>
